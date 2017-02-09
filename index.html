@@ -32,14 +32,30 @@
 				text-align: center;
 				background-color: #EEEEEE;
 			}
+			
+			footer {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				padding: 10px;
+				background-color: #e5e5e5;
+				text-align: center;
+				font-size: 13px;
+			}
+			
 		</style>
 	</head>
 	<body>
 		<div class="center">
 			<h1>Please choose a password:</h1>
-			<input type="text" id="pw" maxlength="40" size="40" autofocus ><br/><br/>
+			<input type="text" id="pw" size="40" autofocus ><br/><br/>
 			<div id="result"></div>
 		</div>
+		
+		<footer>
+		Check out the source on&nbsp;&nbsp;<a href="https://github.com/HackerCow/ridiculous-password-checker/"><img src="GitHub-Mark-32px.png" style="height: 15px; display: inline-block; vertical-align: bottom;"/></a>
+		</footer>
 		<script async src="fiveLetterWordsScoringAtLeastTwelveInScrabble.js"></script>
 		<script async src="threeLetterWords.js"></script>
 		<script>
@@ -73,7 +89,7 @@
 							case 5: div.innerHTML = "You have to include at least one emoji that was added to unicode in 2014."; break;
 							case 6: div.innerHTML = "You have to include at least one Kanji."; break;
 							case 7: div.innerHTML = "You have to include at least 8 different orthagonal arrow styles whose directions cancel out."; break;
-							case 8: div.innerHTML = "Password must contain one english five letter word which scores at least 12 points in scrabble."; break;
+							case 8: div.innerHTML = "Password must contain one english five letter word which scores at least 12 points in Scrabble."; break;
 							case 9: div.innerHTML = "Password must contain at least 2 three letter words in the ROT13 cipher."; break;
 							case 10: div.innerHTML = "Your password must include one punctuation mark in URL encoding."; break;
 						}
