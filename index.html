@@ -1,0 +1,300 @@
+﻿<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<style>
+			* {
+				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			}
+			.center {
+				text-align: center;
+				margin-top: 20%;
+			}
+			
+			#result {
+				display: inline-block;
+				border-radius: 4px;
+				padding: 20px;
+				color: white;
+			}
+			
+			#pw {
+				height: 40px;
+				font-size: 20px;
+				font-family: "Consolas";
+				border-radius: 4px;
+				border: 1px solid black;
+				padding: 3px;
+				text-align: center;
+				background-color: #EEEEEE;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="center">
+			<h1>Please choose a password:</h1>
+			<input type="text" id="pw" maxlength="40" size="40" autofocus ><br/><br/>
+			<div id="result"></div>
+		</div>
+		<script async src="fiveLetterWordsScoringAtLeastTwelveInScrabble.js"></script>
+		<script async src="threeLetterWords.js"></script>
+		<script>
+			var emojisOf2014 = "🙂🙁🕵️🕴️🗣️🖕🖖🖐️👁️🗨️🗯️🕳️🕶️🛍️🐿️🕊️🕷️🕸️🏵️🌶️🍽️🗺🏔️🏕️🏖️🏜️🏝️🏞️🏟️🏛️🏗️🏘️🏙️🏚️🖼️🏎🏍️🛣️🛤️🛳️🛥️🛩️🛫🛬🛰️🛎️🛌🛏️🛋️🕰️🌡️🌤️🌥️🌦️🌧️🌨️🌩️🌪️🌫️🌬️🎗️🎟️🎖️🏅🏌️🏋️🕹️🎙️🎚️🎛️🖥️🖨️🖱🖲️🎞️📽️📸🕯️ 🗞️🏷️🗳️🖋️🖊️🖌️🖍️🗂️🗒️🗓️🖇️🗃️🗄️🗑️🗝️🛠️🗡️🛡️🗜️🛢️🕉️⏸️⏹️⏺️🏴🏳️";
+			var arrowsLeft =  "←⇐⬅◀↼↽⇠⇦⇚↤⍇";
+			var arrowsRight = "→⇒➡▶⇀⇁⇢⇨⇛↦⍈";
+			var arrowsUp =    "↑⇑⬆▲↾↿⇡⇧⟰↥⍐";
+			var arrowsDown =  "↓⇓⬇▼⇂⇃⇣⇩⟱↧⍗";
+			
+			String.prototype.rot13 = function(){
+				return this.replace(/[a-zA-Z]/g, function(c){
+					return String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
+				});
+			};
+			
+			(function() {
+				var input = document.querySelector("#pw");
+				var div = document.querySelector("#result");
+				
+				input.addEventListener("input", function(){
+					var result = check(input.value);
+					if(result == 0) {
+						div.innerHTML = "Compliant 👌";
+						div.style.backgroundColor = "green";
+					} else {
+						switch (result) {
+							case 1: div.innerHTML = "Password must be between 9 and 38 characters long."; break;
+							case 2: div.innerHTML = "There must be 10 times more uppercase letters than there are lowercase letters."; break;
+							case 3: div.innerHTML = "You must include 3 non-alphanumeric characters (not counting those required by other rules)."; break;
+							case 4: div.innerHTML = "Your passwords needs to include at least 8 numbers (only 2 sets of repeats), which added up must be a multiple of 9."; break;
+							case 5: div.innerHTML = "You have to include at least one emoji that was added to unicode in 2014."; break;
+							case 6: div.innerHTML = "You have to include at least one Kanji."; break;
+							case 7: div.innerHTML = "You have to include at least 8 different orthagonal arrow styles whose directions cancel out."; break;
+							case 8: div.innerHTML = "Password must contain one english five letter word which scores at least 12 points in scrabble."; break;
+							case 9: div.innerHTML = "Password must contain at least 2 three letter words in the ROT13 cipher."; break;
+							case 10: div.innerHTML = "Your password must include one punctuation mark in URL encoding."; break;
+						}
+						
+						div.style.backgroundColor = "red";
+					}
+				});
+			})();
+			
+			function isKanji(c) {
+				return (/^[\u4e00-\u9faf]+$/.test(c));
+			}
+			
+			function cancelsOut(s) {			
+				var lr = 0;
+				var ud = 0;
+				
+				for (var i = 0, len = s.length; i < len; i++) {
+					var c = s.charAt(i);
+					
+					if(arrowsLeft.indexOf(c) > -1) {
+						lr--;
+					}
+					
+					if(arrowsRight.indexOf(c) > -1) {
+						lr++;
+					}
+					
+					if(arrowsUp.indexOf(c) > -1) {
+						ud++;
+					}
+					
+					if(arrowsDown.indexOf(c) > -1) {
+						ud--;
+					}
+				}
+				
+				return lr == 0 && ud == 0;
+			}
+			
+			function getArrows(s) {
+				var result = "";
+
+				for (var i = 0, len = s.length; i < len; i++) {
+					var c = s.charAt(i);
+					
+					if(arrowsLeft.indexOf(c) > -1 || arrowsRight.indexOf(c) > -1 || arrowsUp.indexOf(c) > -1 || arrowsDown.indexOf(c) > -1) {
+						result += c;
+					}
+				}
+				
+				return result;
+			}
+			
+			/*
+			 * if you're gonna look at this you might aswell full-on cheat
+			 * here's a valid solution: AANVENJOYa1233097🕴漢←⇒⬆▼↼⇁⇡⇩%2E
+			**/
+			
+			function check(pw) {
+				// 1) Between 9 and 38 characters
+				if (pw.length < 9 || pw.length > 38) {
+					return 1;
+				}
+				
+				// 2) Amount of uppercase letters devided by amount of lower case letters = 10
+				var numUpper = pw.length - pw.replace(/[A-Z]/g, '').length;
+				var numLower = pw.length - pw.replace(/[a-z]/g, '').length;
+				if (numUpper / numLower !== 10.0) {
+					return 2;
+				}
+				
+				// 3) Three non-alphanumeric characters (NOT ones from other requirements)
+				// we will gradually subtract from this and check if it's over 3 later
+				var numNonAlphaNum = pw.length - pw.replace(/[a-zA-Z0-9]/g, '').length;
+				console.log(pw.replace(/[a-zA-Z0-9]/g, ''));
+				
+				// 4) At least 8 numbers (only 2 sets of repeats), added up must be a multiple of 9
+				var prevChr, repeats;
+				var numbers = 0;
+				var sum = 0;
+				for (var i = 0, len = pw.length; i < len; i++) {
+					var c = pw.charAt(i);
+					if (c >= '0' && c <= '9') {
+						if (prevChr === c) {
+							repeats++;
+						}
+						sum += c-'0';
+						prevChr = c;
+						numbers++;
+					}
+				}
+				
+				if (sum % 9 != 0 || repeats > 2 || numbers < 8) {
+					return 4;
+				}
+				
+				// 5) Include at least one emoji that was added to unicode in 2014
+				var emojiCount = 0;
+				for (var i = 0, len = pw.length; i < len; i++) {
+					var c = pw.charAt(i);
+					if (emojisOf2014.indexOf(c) > -1) {
+						emojiCount++;
+					}
+				}
+				
+				if (emojiCount < 1) {
+					return 5;
+				}
+				
+				console.log("-" + emojiCount + " (emojis)");
+				
+				numNonAlphaNum-=emojiCount;
+				
+				// 6) Include at least one Kanji
+				var kanjiCount = 0;
+				for (var i = 0, len = pw.length; i < len; i++) {
+					var c = pw.charAt(i);
+					if (isKanji(c)) {
+						kanjiCount++;
+					}
+				}
+				
+				if (kanjiCount < 1) {
+					console.log("no kanji");
+					return 6;
+				}
+				
+				numNonAlphaNum -= kanjiCount;
+				
+				// 7) Include at least 8 different orthagonal arrow styles whose directions cancel out
+				var arrows = getArrows(pw);
+				var used = new Array();
+				var differentStyles = 0;
+				for (var i = 0, len = arrows.length; i < len; i++) {
+					var c = arrows.charAt(i);
+					
+					var ind = arrowsLeft.indexOf(c);
+					if (ind == -1) {
+						ind = arrowsRight.indexOf(c);
+					}
+					
+					if (ind == -1) {
+						ind = arrowsUp.indexOf(c);
+					}
+					
+					if (ind == -1) {
+						ind = arrowsDown.indexOf(c);
+					}
+					
+					if(!used[ind]) {
+						differentStyles++;
+						used[ind] = true;
+					}
+				}
+				
+				console.log(differentStyles + " different arrow styles");
+				
+				if (differentStyles < 8) {
+					return 7;
+				}
+				
+				if (!cancelsOut(arrows)) {
+					return 7;
+				}
+				
+				numNonAlphaNum -= arrows.length;
+				
+				// 8) Include one english five letter word which scores at least 12 points in scrabble
+				var lower = pw.toLowerCase();
+				var found = false;
+				for (var i = 0, len = fiveLetterWordsScoringAtLeastTwelveInScrabble.length; i < len; i++) {
+					var w = fiveLetterWordsScoringAtLeastTwelveInScrabble[i];
+					if (lower.indexOf(w) > -1) {
+						found = true;
+						break;
+					}
+				}
+				
+				if (!found) {
+					return 8;
+				}
+				
+				// 9) Include at least 2 three letter words in ROT13
+				var rot = pw.rot13().toLowerCase();
+				console.log(rot);
+				var numFound = 0;
+				
+				for (var i = 0, len = threeLetterWords.length; i < len; i++) {
+					var w = threeLetterWords[i];
+					if (rot.indexOf(w) > -1) {
+						numFound++;
+					}
+				}
+				
+				console.log("found " + numFound);
+				
+				if (numFound < 2) {
+					return 9;
+				}
+				
+				// 10) Include one punctuation mark in URL encoding (the numbers and/or letters in this must follow rules number 4 and 2)
+				var numPunc = 0;
+				var encRegex = /(%[a-fA-F0-9]{2})/g;
+				match = encRegex.exec(pw);
+				while (match != null) {
+					if ("%2e%2c%21%3f%3b%3a".indexOf(match[0].toLowerCase()) > -1) {
+						numPunc++;
+					}
+					numNonAlphaNum--; // for the %
+					match = encRegex.exec(pw);
+				}
+				
+				if (numPunc != 1) {
+					return 10;
+				}
+				
+				// finally, validate rule 3
+				console.log(numNonAlphaNum + " not alphanumeric");
+				if (numNonAlphaNum < 3) {
+					return 3;
+				}
+				
+				return 0;
+			}
+		</script>
+	</body>
+</html>
