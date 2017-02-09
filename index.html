@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE HTML>
 <html lang="en">
 	<head>
+		<title>Please choose a password</title>
 		<meta charset="utf-8" />
 		<style>
 			* {
@@ -165,7 +166,6 @@
 				// 3) Three non-alphanumeric characters (NOT ones from other requirements)
 				// we will gradually subtract from this and check if it's over 3 later
 				var numNonAlphaNum = pw.length - pw.replace(/[a-zA-Z0-9]/g, '').length;
-				console.log(pw.replace(/[a-zA-Z0-9]/g, ''));
 				
 				// 4) At least 8 numbers (only 2 sets of repeats), added up must be a multiple of 9
 				var prevChr, repeats;
@@ -200,8 +200,6 @@
 					return 5;
 				}
 				
-				console.log("-" + emojiCount + " (emojis)");
-				
 				numNonAlphaNum-=emojiCount;
 				
 				// 6) Include at least one Kanji
@@ -214,7 +212,6 @@
 				}
 				
 				if (kanjiCount < 1) {
-					console.log("no kanji");
 					return 6;
 				}
 				
@@ -246,8 +243,6 @@
 					}
 				}
 				
-				console.log(differentStyles + " different arrow styles");
-				
 				if (differentStyles < 8) {
 					return 7;
 				}
@@ -275,7 +270,6 @@
 				
 				// 9) Include at least 2 three letter words in ROT13
 				var rot = pw.rot13().toLowerCase();
-				console.log(rot);
 				var numFound = 0;
 				
 				for (var i = 0, len = threeLetterWords.length; i < len; i++) {
@@ -284,8 +278,6 @@
 						numFound++;
 					}
 				}
-				
-				console.log("found " + numFound);
 				
 				if (numFound < 2) {
 					return 9;
@@ -308,7 +300,6 @@
 				}
 				
 				// finally, validate rule 3
-				console.log(numNonAlphaNum + " not alphanumeric");
 				if (numNonAlphaNum < 3) {
 					return 3;
 				}
