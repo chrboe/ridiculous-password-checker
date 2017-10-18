@@ -60,6 +60,7 @@
 		</footer>
 		<script async src="fiveLetterWordsScoringAtLeastTwelveInScrabble.js"></script>
 		<script async src="threeLetterWords.js"></script>
+		<script async src="https://raw.githubusercontent.com/bestiejs/punycode.js/master/punycode.js"></script>
 		<script>
 			var emojisOf2014 = "🙂🙁🕵️🕴️🗣️🖕🖖🖐️👁️🗨️🗯️🕳️🕶️🛍️🐿️🕊️🕷️🕸️🏵️🌶️🍽️🗺🏔️🏕️🏖️🏜️🏝️🏞️🏟️🏛️🏗️🏘️🏙️🏚️🖼️🏎🏍️🛣️🛤️🛳️🛥️🛩️🛫🛬🛰️🛎️🛌🛏️🛋️🕰️🌡️🌤️🌥️🌦️🌧️🌨️🌩️🌪️🌫️🌬️🎗️🎟️🎖️🏅🏌️🏋️🕹️🎙️🎚️🎛️🖥️🖨️🖱🖲️🎞️📽️📸🕯️ 🗞️🏷️🗳️🖋️🖊️🖌️🖍️🗂️🗒️🗓️🖇️🗃️🗄️🗑️🗝️🛠️🗡️🛡️🗜️🛢️🕉️⏸️⏹️⏺️🏴🏳️";
 			var arrowsLeft =  "←⇐⬅◀↼↽⇠⇦⇚↤⍇";
@@ -153,20 +154,21 @@
 			
 			function check(pw) {
 				// 1) Between 9 and 38 characters
-				if (pw.length < 9 || pw.length > 38) {
+				let length = punycode.ucs2.decode(pw).length;
+				if (length < 9 || length > 38) {
 					return 1;
 				}
 				
 				// 2) Amount of uppercase letters devided by amount of lower case letters = 10
-				var numUpper = pw.length - pw.replace(/[A-Z]/g, '').length;
-				var numLower = pw.length - pw.replace(/[a-z]/g, '').length;
+				var numUpper = length - pw.replace(/[A-Z]/g, '').length;
+				var numLower = length - pw.replace(/[a-z]/g, '').length;
 				if (numUpper / numLower !== 10.0) {
 					return 2;
 				}
 				
 				// 3) Three non-alphanumeric characters (NOT ones from other requirements)
 				// we will gradually subtract from this and check if it's over 3 later
-				var numNonAlphaNum = pw.length - pw.replace(/[a-zA-Z0-9]/g, '').length;
+				var numNonAlphaNum = length - pw.replace(/[a-zA-Z0-9]/g, '').length;
 				
 				// 4) At least 8 numbers (only 2 sets of repeats), added up must be a multiple of 9
 				var prevChr, repeats;
