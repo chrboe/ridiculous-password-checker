@@ -60,7 +60,7 @@
 		</footer>
 		<script async src="fiveLetterWordsScoringAtLeastTwelveInScrabble.js"></script>
 		<script async src="threeLetterWords.js"></script>
-		<script async src="punycode.js"></script>
+		<script async src="grapheme-splitter.js"></script>
 		<script>
 			var emojisOf2014 = "🙂🙁🕵️🕴️🗣️🖕🖖🖐️👁️🗨️🗯️🕳️🕶️🛍️🐿️🕊️🕷️🕸️🏵️🌶️🍽️🗺🏔️🏕️🏖️🏜️🏝️🏞️🏟️🏛️🏗️🏘️🏙️🏚️🖼️🏎🏍️🛣️🛤️🛳️🛥️🛩️🛫🛬🛰️🛎️🛌🛏️🛋️🕰️🌡️🌤️🌥️🌦️🌧️🌨️🌩️🌪️🌫️🌬️🎗️🎟️🎖️🏅🏌️🏋️🕹️🎙️🎚️🎛️🖥️🖨️🖱🖲️🎞️📽️📸🕯️ 🗞️🏷️🗳️🖋️🖊️🖌️🖍️🗂️🗒️🗓️🖇️🗃️🗄️🗑️🗝️🛠️🗡️🛡️🗜️🛢️🕉️⏸️⏹️⏺️🏴🏳️";
 			var arrowsLeft =  "←⇐⬅◀↼↽⇠⇦⇚↤⍇";
@@ -153,15 +153,16 @@
 			**/
 			
 			function check(pw) {
+				var splitter = new GraphemeSplitter();
 				// 1) Between 9 and 38 characters
-				let length = punycode.ucs2.decode(pw).length;
+				let length = splitter.countGraphemes(pw);
 				if (length < 9 || length > 38) {
 					return 1;
 				}
 				
 				// 2) Amount of uppercase letters devided by amount of lower case letters = 10
-				var numUpper = length - pw.replace(/[A-Z]/g, '').length;
-				var numLower = length - pw.replace(/[a-z]/g, '').length;
+				var numUpper = length - splitter.countGraphemes(pw.replace(/[A-Z]/g, ''));
+				var numLower = length - splitter.countGraphemes(pw.replace(/[a-z]/g, ''));
 				if (numUpper / numLower !== 10.0) {
 					return 2;
 				}
